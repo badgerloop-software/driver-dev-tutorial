@@ -36,7 +36,7 @@ int Mcp23017::set_state(int pin, uint8_t val) {
 
 
 // Verifies that the device is accessible over I2C and sets pin directions
-int Mcp23017::begin() {
+int Mcp23017::begin(uint8_t directions[8]) {
     int rc;
 
     // Make sure we can access the i2c bus

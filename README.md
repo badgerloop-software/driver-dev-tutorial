@@ -77,4 +77,20 @@ I know that was a lot of information, but now you should understand the mechanis
  **`set_state`**<br>
  Similar to how `get_dir` was nearly identical to `get_state`, `set_state` is going to be very similar to `set_dir` . There shouldn't be too many changes here.
 
+ **`begin`**<br>
+ This function is responsible for establishing I2C communication between the computer and the device, as well as setting the direction of each pin on the device. The former has already been implemented. You will just be setting the direction of each pin. Note that this function takes in an array of 8 integers called `directions`. These will correspond to each pin in the device's bank.
+
  ## Testing
+ So you wrote your driver, but now you have to test it. The first step you should take is to make sure the functions you implemented all compile. You can do this by running the following command:
+ ```
+ ./build.sh
+ ```
+You will have to take some time working through any syntax errors you have. It might get a little frustrating, especially if you aren't very familiar with C++. Feel free to reach out in the firmware channel if you get stuck on anything specific.
+
+Now that you have a device class that compilers, you can write code to test your functions. This code should be in the `main` function in [main.cpp](main.cpp). Assume the MCP23017 is connected like so:
+![circuit.png](images/circuit.png)
+**Note**: This circuit diagram is meant to only convey the connections of the MCP23017 GPIO pins. Not the entire surrounding circuit.
+
+As you can see, two LEDs are tied to pins 0 and 4. There is also a switch connected to pin 7. Can you initialize an Mcp23017 object and use the functions you implemented to turn the LEDs on and read the position of the switch?
+
+We will try to schedule times to get you running your code on this hardware setup. :)

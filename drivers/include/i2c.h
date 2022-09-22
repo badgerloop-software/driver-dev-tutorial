@@ -17,15 +17,21 @@ class I2c {
   int write_byte(uint8_t reg);
 
  protected:
-  I2c(int bus, int addr, int mode);
+  I2c(int bus, int addr);
   ~I2c();
   int open_i2c();
   bool is_open();
+  int read_data(uint8_t *buff, int size);
+  int read_bytes_from_reg(uint8_t reg, uint8_t *buff, int nBytes);
+
+  // Returns the value of a register given its address
+  uint8_t read_from_reg(uint8_t reg);
+
+  
+  // Writes data of any size to a register given its address and the data
+  // Returns 0 on success
   template <class T>
   int write_data(uint8_t reg, T val);
-  int read_data(uint8_t *buff, int size);
-  uint8_t read_from_reg(uint8_t reg);
-  int read_bytes_from_reg(uint8_t reg, uint8_t *buff, int nBytes);
 };
 
 template <class T>

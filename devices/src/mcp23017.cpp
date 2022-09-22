@@ -7,10 +7,10 @@
 #include <iostream>
 
 
-// TODO: Define macros for useful register below:
+// TODO (optional): Define macros for useful register below:
 
 // Calls parent constructor
-Mcp23017::Mcp23017(int bus, int addr) : I2c(bus, addr, O_RDWR) {}
+Mcp23017::Mcp23017(int bus, int addr) : I2c(bus, addr) {}
 
 
 // TODO: Read from direction register
@@ -19,13 +19,13 @@ uint8_t Mcp23017::get_dir(int pin) {
 }
 
 
-// TODO: Write to directions register
-int Mcp23017::set_dir(int pin, uint8_t dir) {
+// TODO: Read from state register
+uint8_t Mcp23017::get_state(int pin) {
     return 0;
 }
 
-// TODO: Read from state register
-uint8_t Mcp23017::get_state(int pin) {
+// TODO: Write to directions register
+int Mcp23017::set_dir(int pin, uint8_t dir) {
     return 0;
 }
 

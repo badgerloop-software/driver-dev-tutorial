@@ -10,10 +10,10 @@
 #include "i2c-dev.h"
 
 /* Also need deconsturctor to close file descriptor */
-I2c::I2c(int bus, int addr, int mode) {
+I2c::I2c(int bus, int addr) {
   this->bus = bus;
   this->deviceAddress = addr;
-  this->openMode = mode;
+  this->openMode = O_RDWR;;
   this->fd = -1; /* This allows is_open() to function at init */
 }
 

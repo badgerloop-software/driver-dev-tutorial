@@ -78,7 +78,7 @@ I know that was a lot of information, but now you should understand the mechanis
  Similar to how `get_dir` was nearly identical to `get_state`, `set_state` is going to be very similar to `set_dir` . There shouldn't be too many changes here.
 
  **`begin`**<br>
- This function is responsible for establishing I2C communication between the computer and the device, as well as setting the direction of each pin on the device. The former has already been implemented. You will just be setting the direction of each pin. Note that this function takes in an array of 8 integers called `directions`. These will correspond to each pin in the device's bank.
+ This function is responsible for establishing I2C communication between the computer and the device, as well as setting the direction of each pin on the device. While all of the I2C initialization is handled by the `I2c` parent class, it is often a good idea to perform a verifiable I2C transaction to make sure everything is working correctly. Most I2C devices contain a register that holds what is called a Device ID number. Look in the datasheet and see if you can find this register and the corresponding ID number for the MCP23017. If we can read and verify this number in the `begin` function, we can have confidence that our I2C communication is working properly. You will also be setting the direction of each pin using the function(s) you implemented above. Note that this function takes in an array of 8 integers called `directions`. These will correspond to the direction of each pin in the device's bank.
 
  ## Testing
  So you wrote your driver, but now you have to test it. The first step you should take is to make sure the functions you implemented all compile. You can do this by running the following command:

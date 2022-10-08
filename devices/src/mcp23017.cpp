@@ -77,6 +77,9 @@ int Mcp23017::begin(uint8_t directions[8]) {
     // TODO: Add device ID check
 
     // TODO: Set pin directions
+    for (int i=0;i<8;i++){
+        this->set_dir(i,directions[i]);
+    }
 
     return 0;
 }

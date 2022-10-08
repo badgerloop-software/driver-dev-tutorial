@@ -6,6 +6,8 @@
 
 #include <iostream>
 
+#define DIR_REG 0x00
+#define GPIO_REG 0x12
 
 // TODO (optional): Define macros for useful register below:
 
@@ -15,23 +17,50 @@ Mcp23017::Mcp23017(int bus, int addr) : I2c(bus, addr) {}
 
 // TODO: Read from direction register
 uint8_t Mcp23017::get_dir(int pin) {
-    return 0;
+
+    uint8_t reg_val = read_from_reg(DIR_REG);
+    // mask off non necessary pins
+    return (reg_val >> pin) & 0x01;
 }
 
 
 // TODO: Read from state register
 uint8_t Mcp23017::get_state(int pin) {
-    return 0;
+    uint8_t reg_val = read_from_reg(GPIO_REG);
+    // mask off non necessary pins
+    return (reg_val >> pin) & 0x01;
 }
 
 // TODO: Write to directions register
 int Mcp23017::set_dir(int pin, uint8_t dir) {
-    return 0;
+
+    uint8_t reg_val = read_from_reg(DIR_REG);
+    uint8_t pin_val = (reg_val >> pin) & 0x01;
+
+    // on to off
+    if (pin_val && !dir){
+         return write_data(DIR_REG,(reg_val & ~(0x01 << pin)));
+    }
+    // off to on
+    else if (!pin_val && dir){
+        return write_data(DIR_REG, (reg_val | (0x01 << pin)));
+    }
 }
 
 // TODO: Write to state register
 int Mcp23017::set_state(int pin, uint8_t val) {
-    return 0;
+
+    uint8_t reg_val = read_from_reg(GPIO_REG);
+    uint8_t pin_val = (reg_val >> pin) & 0x01;
+
+    // on to off
+    if (pin_val && !val){
+         return write_data(GPIO_REG,(reg_val & ~(0x01 << pin)));
+    }
+    // off to on
+    else if (!pin_val && val){
+        return write_data(GPIO_REG, (reg_val | (0x01 << pin)));
+    }
 }
 
 

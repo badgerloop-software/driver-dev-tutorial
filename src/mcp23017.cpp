@@ -1,16 +1,15 @@
 #include "mcp23017.h"
-
 #include <errno.h>
-#include <fcntl.h>
-#include <stdint.h>
-
-#include <iostream>
 
 
 // TODO (optional): Define macros for useful register below:
 
-// Calls parent constructor
-Mcp23017::Mcp23017(int bus, int addr) : I2c(bus, addr) {}
+
+
+// TODO: Initialize i2cBus member
+Mcp23017::Mcp23017(int bus, int addr, I2C* i2cBus) {
+
+}
 
 
 // TODO: Read from direction register
@@ -38,12 +37,6 @@ int Mcp23017::set_state(int pin, uint8_t val) {
 // Verifies that the device is accessible over I2C and sets pin directions
 int Mcp23017::begin(uint8_t directions[8]) {
     int rc;
-
-    // Make sure we can access the i2c bus
-    if (!this->is_open()) {
-        rc = this->open_i2c();
-        if (rc) return rc;
-    }
 
     // TODO: Add device ID check
 

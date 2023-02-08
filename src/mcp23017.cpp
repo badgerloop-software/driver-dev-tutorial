@@ -7,7 +7,7 @@
 
 
 // TODO: Initialize i2cBus member
-Mcp23017::Mcp23017(int bus, int addr, I2C* i2cBus) {
+Mcp23017::Mcp23017(int addr, I2C* i2cBus) {
 
 }
 

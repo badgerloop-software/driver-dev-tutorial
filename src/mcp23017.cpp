@@ -5,14 +5,11 @@
 // TODO (optional): Define macros for useful register below:
 
 
-
 // TODO: Initialize i2cBus member
 Mcp23017::Mcp23017(int addr, I2C* i2cBus) {
 
 }
 
-
-// TODO: Read from direction register
 uint8_t Mcp23017::get_dir(int pin) {
     return 0;
 }
@@ -39,8 +36,6 @@ int Mcp23017::begin(uint8_t directions[8]) {
     int rc;
 
     // TODO: Add device ID check
-
-    // TODO: Set pin directions
 
     return 0;
 }

@@ -1,5 +1,5 @@
 # Device Driver Tutorial
-*Author: Ben Everson*
+*Authors: Ben Everson, Wilson Guo*
 
 A hands-on introduction to Badgerloop embedded device driver architecture, development, and testing.
 

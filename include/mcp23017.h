@@ -1,8 +1,9 @@
-#ifndef __mcp__h__
+    #ifndef __mcp__h__
 #define __mcp__h__
 
 #include "mbed.h"
 #include "stdint.h"
+#include <I2C.h>
 
 
 class Mcp23017 {

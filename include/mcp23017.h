@@ -3,7 +3,10 @@
 
 #include "mbed.h"
 #include "stdint.h"
+#include <I2C.h>
 
+#define IODIRA 0x00
+#define GPIO_A 0x12
 
 class Mcp23017 {
  private:

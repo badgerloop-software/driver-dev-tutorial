@@ -1,7 +1,4 @@
 #include "mcp23017.h"
-#include <cstdint>
-#include <errno.h>
-#include <I2C.h>
 
 
 // TODO (optional): Define macros for useful register below:
@@ -20,7 +17,7 @@ uint8_t Mcp23017::get_dir(int pin) {
     this->i2cBus->write(this->addr, buf, 1, false);
     this->i2cBus->read(this->addr, buf, 1, false);
 
-    return (buf[0] && (1 >> pin)) > 0;
+    return (buf[0] && (1 << pin)) > 0;
 }
 
 
@@ -31,7 +28,7 @@ uint8_t Mcp23017::get_state(int pin) {
     this->i2cBus->write(this->addr, buf, 1, false);
     this->i2cBus->read(this->addr, buf, 1, false);
 
-    return (buf[0] && (1 >> pin)) > 0;
+    return (buf[0] && (1 << pin)) > 0;
 }
 
 // TODO: Write to directions register
@@ -65,9 +62,9 @@ int Mcp23017::set_state(int pin, uint8_t val) {
     uint8_t data = buf[0];
 
     if (val) {
-        data |= 1 << pin;
+        data |= 0x1 << pin;
     } else {
-        data &= ~(1 << pin);
+        data &= ~(0x1 << pin);
     }
 
     buf[0] = REGISTER_GPIOA;

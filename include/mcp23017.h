@@ -1,8 +1,10 @@
-    #ifndef __mcp__h__
+#ifndef __mcp__h__
 #define __mcp__h__
 
 #include "mbed.h"
 #include "stdint.h"
+#include <cstdint>
+#include <errno.h>
 #include <I2C.h>
 
 

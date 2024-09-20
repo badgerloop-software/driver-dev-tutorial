@@ -1,5 +1,5 @@
 # Device Driver Tutorial
-*Authors: Ben Everson, Wilson Guo*
+*Authors: Ben Everson, Wilson Guo, Bowen Quan*
 
 A hands-on introduction to Badgerloop embedded device driver architecture, development, and testing.
 
@@ -48,11 +48,11 @@ The bits in the GPIO port register correspond to the level of each GPIO pin. As 
 
 I know that was a lot of information, but now you should understand the mechanisms we are going to use to interact with the pins on our MCP23017. This section of the tutorial will involve implementing functions to configure, monitor, and control the pins on an MCP23017. 
 
- Let's start by looking at the I2C serial communication class. Take a look at the definition of the I2C class in the [MbedOS API](https://os.mbed.com/docs/mbed-os/v6.15/apis/i2c.html). Since the Mcp23017 class will contain an instance of the I2C class, it's important to unerstand the protected methods we will have at our disposal. These methods are already implemented, but we will be using them to actually send messages on the I2C bus. The two important methods we will use in this tutorial are the `write (int address, const char *data, int length, bool repeated=false)` method and the `read (int address, char *data, int length, bool repeated=false)`.
+ Let's start by looking at the I2C serial communication class. We will use [Arduino's Wire library](https://www.arduino.cc/reference/en/language/functions/communication/wire/) for this. The important methods we will use are: [write()](https://www.arduino.cc/reference/en/language/functions/communication/wire/write), [read()](https://www.arduino.cc/reference/en/language/functions/communication/wire/read), and other related methods like `beginTransmission()`, `endTransmission()`, `requestFrom()`. Make sure to look at the examples in `write()` and `read()` links to see how they are used and how the related methods are used. 
  
  **Note**: The data in an I2C message is always one or more bytes long. This means that we can't just tell the device to write or read a single bit of a register. We will always be dealing with all 8 bits, AKA a byte, at once.
 
- Now that we know what functions we will use to read and write the MCP23017 registers, we can start implementing the functions defined in [include/mcp23017.h](include/mcp23017.h). The stubs are layed out for you in [src/mcp23017.cpp](src/mcp23017.cpp). If you feel confident in implementing these functions, give it a try! Feel free to skip to [Testing](#testing) section once you are done. If you still feel like you need some help, I will go over each of these methods one by one.
+ Now that we know what functions we will use to read and write the MCP23017 registers, we can start implementing the functions defined in [include/mcp23017.h](include/mcp23017.h). The stubs are laid out for you in [src/mcp23017.cpp](src/mcp23017.cpp). If you feel confident in implementing these functions, give it a try! Feel free to skip to [Testing](#testing) section once you are done. If you still feel like you need some help, I will go over each of these methods one by one.
 
  **Note:** You will see a data type, `uint8_t`, that might not be familiar to you. This data type represents an unsigned 8 bit integer (a byte). It will be used whenever we are dealing with register addresses and values.
 
@@ -60,7 +60,7 @@ I know that was a lot of information, but now you should understand the mechanis
  This function simply needs to record the identifying information that we pass in (the device address) and store the I2C instance that we use to access the bus. You will see how we use these members later when we access the device. 
 
  **`get_dir`**<br>
- This function should return the value of a specific pin's direction. To do this, we will need to do a few things. First, we need to first specify to the MCP what register we want to read from by writing the proper register offset to it. Second, we will need to read from the iodir register we just specified. Third, since we have to read the value of the entire register (remember we can't just read one bit), we have to do some bitwise arithmetic to figure out what part of the byte we read corresponds to the pin we are looking for. Finally, we can return that value.
+ This function should return the value of a specific pin's direction. To do this, we will need to do a few things. First, we need to first specify to the MCP what register we want to read from by writing the proper register offset to it. Second, we will need to read **a byte** from the iodir register we just specified. Third, we have to do some bitwise arithmetic to figure out what part of **the byte** we read corresponds to the pin we are looking for. Finally, we can return that value.
 
  **Hint:** You might find use for the and (&) and shift right(>>) operators to filter out the pin you are looking for.
 
@@ -78,10 +78,10 @@ I know that was a lot of information, but now you should understand the mechanis
  Similar to how `get_dir` was nearly identical to `get_state`, `set_state` is going to be very similar to `set_dir` . There shouldn't be too many changes here.
 
  **`begin`**<br>
- This function is responsible for confirming I2C communication between the computer and the device, as well as setting the direction of each pin on the device. While all of the I2C initialization is handled by the `I2C` class, it is often a good idea to perform a verifiable I2C transaction to make sure everything is working correctly. Most I2C devices contain a register that holds what is called a Device ID number. Look in the datasheet and see if you can find this register and the corresponding ID number for the MCP23017. If we can read and verify this number in the `begin` function, we can have confidence that our I2C communication is working properly. You will also be setting the direction of each pin using the function(s) you implemented above. Note that this function takes in an array of 8 integers called `directions`. These will correspond to the direction of each pin in the device's bank.
+ This function is responsible for confirming I2C communication between the computer and the device, as well as setting the direction of each pin on the device. It is a good idea to perform a verifiable I2C transaction to make sure everything is working correctly. Most I2C devices contain a register that holds what is called a Device ID number, but the MCP23017 doesn't. So, we will use the IODIRA register as our "Device ID" register instead. If we can read and verify the default value of the IODIRA register in the `begin` function, we can have confidence that our I2C communication is working properly. You will also be setting the direction of each pin using the function(s) you implemented above. Note that this function takes in an array of 8 integers called `directions`. These will correspond to the direction of each pin in the device's bank.
 
  ## Testing
- So you wrote your driver, but now you have to test it. The first step you should take is to make sure the functions you implemented all compile. You can do this by clicking the hammer; make sure that you have chosen `driver-dev-tutorial` as the current project and `Nucleo-F767ZI` as the target. You will have to take some time working through any syntax errors you have. It might get a little frustrating, especially if you aren't very familiar with C++. Feel free to reach out in the firmware channel if you get stuck on anything specific.
+ To test, first make sure the functions you implemented all compile by clicking the check mark at the bottom bar of VS Code. The target has already been set as the Nucleo F303RE. Work through any syntax errors you may have. It might get a little frustrating, especially if you aren't very familiar with C++. Feel free to reach out in the firmware channel if you get stuck on anything specific.
 
 Now that you have a device class that compiles, you can write code to test your functions. This code should be in the `main` function in [main.cpp](main.cpp). Assume the MCP23017 is connected like so:
 ![circuit.png](images/circuit.png)

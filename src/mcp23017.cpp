@@ -1,12 +1,10 @@
 #include "mcp23017.h"
-#include <errno.h>
-
 
 // TODO (optional): Define macros for useful register below:
 
 
 // TODO: Initialize i2cBus member
-Mcp23017::Mcp23017(int addr, I2C* i2cBus) {
+Mcp23017::Mcp23017(int addr) {
 
 }
 

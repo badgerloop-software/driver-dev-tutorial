@@ -11,6 +11,10 @@ Mcp23017::Mcp23017(int addr) {
 
 uint8_t Mcp23017::get_dir(int pin) {
    // specify what register to read from
+   Wire.beginTransmission(Mcp23017::addr);
+   Wire.write(DIRECTIONS_REGISTER);
+   Wire.endTransmission();
+
    Wire.requestFrom(DIRECTIONS_REGISTER, 1);
 
    // read a byte from the specified register
@@ -24,6 +28,9 @@ uint8_t Mcp23017::get_dir(int pin) {
 // TODO: Read from state register
 uint8_t Mcp23017::get_state(int pin) {
    // specify what register to read from
+   Wire.beginTransmission(Mcp23017::addr);
+   Wire.write(STATE_REGISTER);
+   Wire.endTransmission();
    Wire.requestFrom(STATE_REGISTER, 1);
 
    // read a byte from the specified register
@@ -35,14 +42,18 @@ uint8_t Mcp23017::get_state(int pin) {
 
 // TODO: Write to directions register
 int Mcp23017::set_dir(int pin, uint8_t dir) {
+   Wire.beginTransmission(Mcp23017::addr);
+   Wire.write(DIRECTIONS_REGISTER);
+   Wire.endTransmission();
    Wire.requestFrom(DIRECTIONS_REGISTER, 1);
    uint8_t prev = Wire.read();
    uint8_t byte = (prev >> (pin + 1)) << (pin + 1);
    byte += (dir << pin);
    byte += (prev << (8 - pin)) >> (8 - pin);
 
-   Wire.beginTransmission(DIRECTIONS_REGISTER);
-   Wire.write(byte);
+   Wire.beginTransmission(Mcp23017::addr);
+   uint8_t writtenData[2] = {DIRECTIONS_REGISTER, byte};
+   Wire.write(writtenData, 2);
    Wire.endTransmission();
 
    return byte;
@@ -50,14 +61,18 @@ int Mcp23017::set_dir(int pin, uint8_t dir) {
 
 // TODO: Write to state register
 int Mcp23017::set_state(int pin, uint8_t val) {
+   Wire.beginTransmission(Mcp23017::addr);
+   Wire.write(STATE_REGISTER);
+   Wire.endTransmission();
    Wire.requestFrom(STATE_REGISTER, 1);
    uint8_t prev = Wire.read();
    uint8_t byte = (prev >> (pin + 1)) << (pin + 1);
    byte += (val << pin);
    byte += (prev << (8 - pin)) >> (8 - pin);
 
-   Wire.beginTransmission(STATE_REGISTER);
-   Wire.write(byte);
+   Wire.beginTransmission(Mcp23017::addr);
+   uint8_t writtenData[2] = {STATE_REGISTER, byte};
+   Wire.write(writtenData, 2);
    Wire.endTransmission();
 
    return byte;
@@ -69,15 +84,18 @@ int Mcp23017::begin(uint8_t directions[8]) {
    int rc;
 
    // TODO: Add device ID check
+   Wire.beginTransmission(Mcp23017::addr);
+   Wire.write(DIRECTIONS_REGISTER);
+   Wire.endTransmission();
    Wire.requestFrom(DIRECTIONS_REGISTER, 1);
    uint8_t byte = Wire.read();
    if (!(byte ^ 0xFF)) {
-   return 0;
+      return 0;
    }
 
 
    for (int i = 0; i < 8; i++) {
-   set_dir(i, directions[i]);
+      set_dir(i, directions[i]);
    }
 
    return 1;

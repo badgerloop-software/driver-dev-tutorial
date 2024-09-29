@@ -2,7 +2,7 @@
 
 // TODO (optional): Define macros for useful register below:
 #define DIRECTIONS_REGISTER 0x00
-#define STATE_REGISTER 0x09
+#define STATE_REGISTER 0x12
 
 // TODO: Initialize i2cBus member
 Mcp23017::Mcp23017(int addr) {
@@ -46,10 +46,15 @@ int Mcp23017::set_dir(int pin, uint8_t dir) {
    Wire.write(DIRECTIONS_REGISTER);
    Wire.endTransmission();
    Wire.requestFrom(DIRECTIONS_REGISTER, 1);
+
    uint8_t prev = Wire.read();
-   uint8_t byte = (prev >> (pin + 1)) << (pin + 1);
-   byte += (dir << pin);
-   byte += (prev << (8 - pin)) >> (8 - pin);
+   uint8_t byte;
+   if (dir == 1) {
+      byte = prev | (dir << pin);
+   }
+   else {
+      byte = prev & !(1 << pin);
+   }
 
    Wire.beginTransmission(Mcp23017::addr);
    uint8_t writtenData[2] = {DIRECTIONS_REGISTER, byte};
@@ -65,10 +70,15 @@ int Mcp23017::set_state(int pin, uint8_t val) {
    Wire.write(STATE_REGISTER);
    Wire.endTransmission();
    Wire.requestFrom(STATE_REGISTER, 1);
+   
    uint8_t prev = Wire.read();
-   uint8_t byte = (prev >> (pin + 1)) << (pin + 1);
-   byte += (val << pin);
-   byte += (prev << (8 - pin)) >> (8 - pin);
+   uint8_t byte;
+   if (val == 1) {
+      byte = prev | (val << pin);
+   }
+   else {
+      byte = prev & !(1 << pin);
+   }
 
    Wire.beginTransmission(Mcp23017::addr);
    uint8_t writtenData[2] = {STATE_REGISTER, byte};
@@ -89,10 +99,9 @@ int Mcp23017::begin(uint8_t directions[8]) {
    Wire.endTransmission();
    Wire.requestFrom(DIRECTIONS_REGISTER, 1);
    uint8_t byte = Wire.read();
-   if (!(byte ^ 0xFF)) {
+   if (byte != 0xFF) {
       return 0;
    }
-
 
    for (int i = 0; i < 8; i++) {
       set_dir(i, directions[i]);

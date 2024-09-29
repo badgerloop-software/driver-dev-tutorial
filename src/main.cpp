@@ -10,7 +10,7 @@ void setup() {
   // TODO: initialize i2c and mcp23017 object
   Wire.begin();
 
-  uint8_t directions[8] = {1, 0, 0, 0, 0, 0, 0, 0};
+  uint8_t directions[8] = {0, 0, 0, 0, 0, 0, 0, 1}; // represent pins 0-7 from left-right
   mcp.begin(directions);
 }
 

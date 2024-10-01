@@ -12,30 +12,32 @@ Mcp23017::Mcp23017(int addr) {
 }
 
 uint8_t Mcp23017::get_dir(int pin) {
-    Wire.requestFrom(IODIRA, 1);
-    int w = 0;
-    if(Wire.available()){
-        w = Wire.read();
-    }
-    else{
-        return 0;
-    }
-    int p = 1 & (w >> pin);
+    Wire.beginTransmission(this->addr);
+    uint8_t dataReg = IODIRA;
+    Wire.write(dataReg);
+    Wire.endTransmission();
+
+    Wire.requestFrom(this->addr, 1);
+
+    int data = Wire.read();
+
+    int p = 1 & (data >> pin);
     return p;
 }
 
 
 // TODO: Read from state register
 uint8_t Mcp23017::get_state(int pin) {
-    Wire.requestFrom(GPIOA, 1);
-    int w = 0;
-    if(Wire.available()){
-        w = Wire.read();
-    }
-    else{
-        return 0;
-    }
-    int p = 1 & (w >> pin);
+    Wire.beginTransmission(this->addr);
+    uint8_t dataReg = GPIOA;
+    Wire.write(dataReg);
+    Wire.endTransmission();
+
+    Wire.requestFrom(this->addr, 1);
+
+    int data = Wire.read();
+
+    int p = 1 & (data >> pin);
     return p;
 }
 
@@ -95,24 +97,31 @@ int Mcp23017::set_state(int pin, uint8_t val) {
 
 
 // Verifies that the device is accessible over I2C and sets pin directions
+//Returns 1 if successful, 0 otherwise  
 int Mcp23017::begin(uint8_t directions[8]) {
     int rc;
 
     // TODO: Add device ID check
     Wire.requestFrom(this->addr, 1);
+
+    Wire.beginTransmission(this->addr);
+    Wire.write(IODIRA);
+    Wire.endTransmission();
+    Wire.requestFrom(this->addr, 1);
+
     if (Wire.available()){
         rc = Wire.read();
+        if (rc != 0){ // I have assumed the default values are supposed to be 0
+            return 0; 
+        }
     }
     else{
         return 0;
     }
 
-    int c = 0;
-
-    while (c < 8){
+    for (int c = 0; c < 8; c++){
         rc = set_dir(c, directions[c]);
-        c++;
     }
 
-    return 0;
+    return 1;
 }

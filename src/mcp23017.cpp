@@ -43,56 +43,43 @@ uint8_t Mcp23017::get_state(int pin) {
 
 // TODO: Write to directions register
 int Mcp23017::set_dir(int pin, uint8_t dir) {
-    Wire.requestFrom(this->addr, 1);
-    int w = 0;
-        if (Wire.available()){
-        w = Wire.read();
-    }
-    else{
-        return 0;
-    }
+    int byte = get_dir(pin);
     if (dir == 1){
-        w = w | (1 << pin);
+        byte = byte | (1 << pin);
     }
     else{
-        w = w & ~(1 << pin);
+        byte = byte & ~(1 << pin);
     }
         
     uint8_t data[2];
     data[0] = IODIRA;
-    data[1] = w;
+    data[1] = byte;
     
     Wire.beginTransmission(this->addr);
     Wire.write(data, 2);
     Wire.endTransmission();
-    return w;
+    return byte;
 }
 
 // TODO: Write to state register
 int Mcp23017::set_state(int pin, uint8_t val) {
-    Wire.requestFrom(this->addr, 1);
-    int w = 0;
-        if (Wire.available()){
-        w = Wire.read();
-    }
-    else{
-        return 0;
-    }
-    if (val == 1){
-        w = w | (1 << pin);
-    }
-    else{
-        w = w & ~(1 << pin);
-    }
+    int byte = get_state(pin);
 
+    if (val == 1){
+        byte = byte | (1 << pin);
+    }
+    else{
+        byte = byte & ~(1 << pin);
+    }
+        
     uint8_t data[2];
     data[0] = GPIOA;
-    data[1] = w;
+    data[1] = byte;
     
     Wire.beginTransmission(this->addr);
     Wire.write(data, 2);
     Wire.endTransmission();
-    return w;
+    return byte;
 }
 
 

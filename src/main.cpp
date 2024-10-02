@@ -15,19 +15,21 @@ void setup() {
 
 void loop() {
   // TODO: Write tests here
+  delay(1000);
+
   mcp.set_state(0, 0);
-  int a = mcp.get_state(0);
-  Serial.println(a);
+  int state = mcp.get_state(0);
+  Serial.println(state);
   mcp.set_state(4, 0);
-  a = mcp.get_state(4);
-  Serial.println(a);
+  state = mcp.get_state(4);
+  Serial.println(state);
 
   delay(1000);
 
   mcp.set_state(0, 1);
-  a = mcp.get_state(0);
-  Serial.println(a);
+  state = mcp.get_state(state);
+  Serial.println(state);
   mcp.set_state(4, 1);
-  a = mcp.get_state(4);
-  Serial.println(a);
+  state = mcp.get_state(4);
+  Serial.println(state);
 }

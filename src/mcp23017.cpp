@@ -43,7 +43,14 @@ uint8_t Mcp23017::get_state(int pin) {
 
 // TODO: Write to directions register
 int Mcp23017::set_dir(int pin, uint8_t dir) {
-    int byte = get_dir(pin);
+    
+    Wire.beginTransmission(this->addr);
+    Wire.write(IODIRA);
+    Wire.endTransmission();
+    Wire.requestFrom(this->addr, 1);
+    
+    uint8_t byte = Wire.read();
+
     if (dir == 1){
         byte = byte | (1 << pin);
     }
@@ -63,7 +70,12 @@ int Mcp23017::set_dir(int pin, uint8_t dir) {
 
 // TODO: Write to state register
 int Mcp23017::set_state(int pin, uint8_t val) {
-    int byte = get_state(pin);
+    Wire.beginTransmission(this->addr);
+    Wire.write(GPIOA);
+    Wire.endTransmission();
+    Wire.requestFrom(this->addr, 1);
+    
+    uint8_t byte = Wire.read();
 
     if (val == 1){
         byte = byte | (1 << pin);
@@ -89,7 +101,6 @@ int Mcp23017::begin(uint8_t directions[8]) {
     int rc;
 
     // TODO: Add device ID check
-    Wire.requestFrom(this->addr, 1);
 
     Wire.beginTransmission(this->addr);
     Wire.write(IODIRA);
@@ -98,7 +109,7 @@ int Mcp23017::begin(uint8_t directions[8]) {
 
     if (Wire.available()){
         rc = Wire.read();
-        if (rc != 0){ // I have assumed the default values are supposed to be 0
+        if (rc != 0){ // Reset values for all pins is 0
             return 0; 
         }
     }

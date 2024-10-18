@@ -4,6 +4,7 @@
 A hands-on introduction to Badgerloop embedded device driver architecture, development, and testing.
 
 ## Introduction
+Before writing any code for this tutorial, make sure you checkout a new branch with `git checkout -b ______`, where `_____` is the name of your branch.
 
 ### What is a driver?
 

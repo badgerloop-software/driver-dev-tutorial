@@ -1,18 +1,22 @@
 #include "mcp23017.h"
 
 // TODO (optional): Define macros for useful register below:
-#define ioDirAddr 0x00
-#define GPIOAddr 0x09
+#define IO_DIR_ADDR 0x00
+#define GPIO_ADDR 0x09
 
 // TODO: Initialize i2cBus member
-Mcp23017::Mcp23017(int addr) : addr(addr) { //member initializxation
-    Wire.begin(addr); // Start wire library and join i2c bus
-}
+Mcp23017::Mcp23017(int addr) : addr(addr) {} //member initialization
 
 uint8_t Mcp23017::get_dir(int pin) {
+    // first establish a connection with the i2bus
+    Wire.beginTransmission(Mcp23017::addr);
+    //Specify the register
+    Wire.write(IO_DIR_ADDR);
+    Wire.endTransmission();
+    
     // request 1 byte from the register at 0x00 (iodir)
     // and store in the variable byteRead
-    Wire.requestFrom(ioDirAddr, 1);
+    Wire.requestFrom(IO_DIR_ADDR, 1);
     uint8_t byteRead;
     while (Wire.available()){
        byteRead = Wire.read();
@@ -26,7 +30,12 @@ uint8_t Mcp23017::get_dir(int pin) {
 // TODO: Read from state register
 uint8_t Mcp23017::get_state(int pin) {
     // Same functionality as above method
-    Wire.requestFrom(GPIOAddr, 1);
+    Wire.beginTransmission(Mcp23017::addr);
+    //Specify the register
+    Wire.write(GPIO_ADDR);
+    Wire.endTransmission();
+    
+    Wire.requestFrom(GPIO_ADDR, 1);
     uint8_t byteRead;
     while (Wire.available()){
        byteRead = Wire.read();
@@ -37,7 +46,11 @@ uint8_t Mcp23017::get_state(int pin) {
 
 // TODO: Write to directions register
 int Mcp23017::set_dir(int pin, uint8_t dir) {
-    Wire.requestFrom(ioDirAddr, 1);
+    Wire.beginTransmission(Mcp23017::addr);
+    Wire.write(IO_DIR_ADDR);
+    Wire.endTransmission();
+    
+    Wire.requestFrom(IO_DIR_ADDR, 1);
     uint8_t byte;
     while (Wire.available()){
        byte = Wire.read();
@@ -46,9 +59,10 @@ int Mcp23017::set_dir(int pin, uint8_t dir) {
         byte |= (dir << pin); // shift the mask by the pin amount
     }
     else if(dir == 0){ //Use AND NOT logic to get the pin to be off
-        byte &= ~(dir << pin);
+        byte &= ~(1 << pin);
     }
-    Wire.beginTransmission(ioDirAddr); //transmit the byte
+    Wire.beginTransmission(Mcp23017::addr);
+    Wire.write(IO_DIR_ADDR);
     Wire.write(byte);
     Wire.endTransmission();
 
@@ -57,7 +71,11 @@ int Mcp23017::set_dir(int pin, uint8_t dir) {
 
 // TODO: Write to state register
 int Mcp23017::set_state(int pin, uint8_t val) {
-    Wire.requestFrom(GPIOAddr, 1);
+    Wire.beginTransmission(Mcp23017::addr);
+    Wire.write(GPIO_ADDR);
+    Wire.endTransmission();
+    
+    Wire.requestFrom(GPIO_ADDR, 1);
     uint8_t byte;
     while (Wire.available()){
        byte = Wire.read();
@@ -66,9 +84,11 @@ int Mcp23017::set_state(int pin, uint8_t val) {
         byte |= (val << pin);
     }
     else if(val == 0){
-        byte &= ~(val << pin);
+        byte &= ~(1 << pin);
     }
-    Wire.beginTransmission(GPIOAddr);
+    
+    Wire.beginTransmission(Mcp23017::addr);
+    Wire.write(GPIO_ADDR);
     Wire.write(byte);
     Wire.endTransmission();
 
@@ -79,18 +99,18 @@ int Mcp23017::set_state(int pin, uint8_t val) {
 // Verifies that the device is accessible over I2C and sets pin directions
 int Mcp23017::begin(uint8_t directions[8]) {
     int rc;
-    Wire.beginTransmission(ioDirAddr);
-    //this method with nothing overloaded will return 0 if successful
-    //and a different integer if it fails
-    rc = Wire.endTransmission(); 
+    
+    Wire.beginTransmission(Mcp23017::addr);
+    Wire.write(IO_DIR_ADDR);
+    Wire.endTransmission();
 
-    if(rc == 0){
-        Serial.println("IODIR Address verified at 0x");
-        Serial.println(ioDirAddr, HEX);
+    Wire.requestFrom(IO_DIR_ADDR, 1);
+    uint8_t rc;
+    while (Wire.available()){
+       rc = Wire.read();
     }
-    else {
-        Serial.println("No device found at address 0x");
-        Serial.println(ioDirAddr, HEX);
+    if(rc != 0xFF){ //according to manual, all of the bits should be on at first
+        return 0; //failed
     }
 
     //set the direction of each of the pins to the desired value
@@ -98,11 +118,5 @@ int Mcp23017::begin(uint8_t directions[8]) {
         set_dir(i, directions[i]);
     }
 
-    //returns 1 byte from IODIR to see if the addresses were successfully changed
-    Wire.requestFrom(ioDirAddr, 1);
-    uint8_t byte;
-    while (Wire.available()){
-       byte = Wire.read();
-    }
-    return byte;
+    return 1; //succeeded
 }

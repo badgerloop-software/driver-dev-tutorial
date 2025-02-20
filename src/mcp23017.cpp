@@ -16,11 +16,9 @@ uint8_t Mcp23017::get_dir(int pin) {
     Wire.endTransmission();
 
     // Read ONE byte from the IODIRA register we just specified.
-    Wire.requestFrom(IODIRA_ADDR, 1);
+    Wire.requestFrom(addr, 1);
     uint8_t read_iodira;
-    while(Wire.available()){
-        read_iodira = Wire.read();
-    }
+    read_iodira = Wire.read();
 
     // Do bitwise arithmetic to figure out what part of the byte corresponds to the pin we are looking for.
     // Shift bit by pin bits
@@ -37,11 +35,9 @@ uint8_t Mcp23017::get_state(int pin) {
     Wire.write(GPIOA_ADDR);
     Wire.endTransmission();
 
-    Wire.requestFrom(GPIOA_ADDR, 1);
+    Wire.requestFrom(addr, 1);
     uint8_t read_gpioa;
-    while(Wire.available()){
-        read_gpioa = Wire.read();
-    }
+    read_gpioa = Wire.read();
 
     uint8_t pinVal = read_gpioa >> pin;
     return pinVal & 1;
@@ -55,12 +51,9 @@ int Mcp23017::set_dir(int pin, uint8_t dir) {
     Wire.write(IODIRA_ADDR);
     Wire.endTransmission();
 
-    Wire.requestFrom(IODIRA_ADDR, 1);
+    Wire.requestFrom(addr, 1);
     uint8_t iodira_val;
-    while (Wire.available())
-    {
-        iodira_val = Wire.read();
-    }
+    iodira_val = Wire.read();
 
     //set dir based on inputs
     if(dir == 0){
@@ -90,12 +83,9 @@ int Mcp23017::set_state(int pin, uint8_t val) {
     Wire.write(GPIOA_ADDR);
     Wire.endTransmission();
 
-    Wire.requestFrom(GPIOA_ADDR, 1);
+    Wire.requestFrom(addr, 1);
     uint8_t gpioa_val;
-    while (Wire.available())
-    {
-        gpioa_val = Wire.read();
-    }
+    gpioa_val = Wire.read();
 
     // set dir based on inputs
     if (val == 0)
@@ -130,12 +120,9 @@ int Mcp23017::begin(uint8_t directions[8]) {
     Wire.write(IODIRA_ADDR);
     Wire.endTransmission();
 
-    Wire.requestFrom(IODIRA_ADDR, 1);
+    Wire.requestFrom(addr, 1);
     uint8_t read_iodira;
-    while (Wire.available())
-    {
-        read_iodira = Wire.read();
-    }
+    read_iodira = Wire.read();
     if(read_iodira != 0xFF){
         // IODIRA is not default value (error)
         return 1;

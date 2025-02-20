@@ -2,7 +2,7 @@
 #include "mcp23017.h"
 
 // TODO: declare mcp23017 object
-Mcp23017 mcp23017_obj;
+Mcp23017 mcp23017_obj(0x40);
 
 // turn on an LED attached to pin 7 and read in the value from a switch from pin 5
 void setup() {
@@ -10,7 +10,7 @@ void setup() {
   Serial.begin(115200);
   printf("Test begins\n"); 
   // TODO: initialize I2C and mcp23017 object
-  mcp23017_obj = Mcp23017(0x40);
+  //mcp23017_obj = Mcp23017(0x40);
   uint8_t directions[8] = {0, 0, 1, 0, 0, 0, 0, 0};
   mcp23017_obj.begin(directions);
 

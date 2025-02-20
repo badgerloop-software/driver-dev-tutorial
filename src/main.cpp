@@ -7,6 +7,7 @@ Mcp23017 mcp23017_obj(0x20);
 // turn on an LED attached to pin 7 and read in the value from a switch from pin 5
 void setup() {
   // initialize Serial for printouts
+  Wire.begin();
   Serial.begin(115200);
   printf("Test begins\n"); 
   // TODO: initialize I2C and mcp23017 object

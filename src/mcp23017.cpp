@@ -22,10 +22,10 @@ uint8_t Mcp23017::get_dir(int pin) {
 
     // Do bitwise arithmetic to figure out what part of the byte corresponds to the pin we are looking for.
     // Shift bit by pin bits
-    uint8_t pinVal = read_iodira >> pin;
+    uint8_t pinVal = (read_iodira >> pin) & 1;
 
     //return value of pin
-    return pinVal & 1;
+    return pinVal;
 }
 
 
@@ -39,8 +39,8 @@ uint8_t Mcp23017::get_state(int pin) {
     uint8_t read_gpioa;
     read_gpioa = Wire.read();
 
-    uint8_t pinVal = read_gpioa >> pin;
-    return pinVal & 1;
+    uint8_t pinVal = (read_gpioa >> pin) & 1;
+    return pinVal;
 }
 
 // TODO: Write to directions register
@@ -113,8 +113,6 @@ int Mcp23017::set_state(int pin, uint8_t val) {
 
 // Verifies that the device is accessible over I2C and sets pin directions
 int Mcp23017::begin(uint8_t directions[8]) {
-    int rc;
-
     // default value of iodira register is 1111 1111
     Wire.beginTransmission(addr);
     Wire.write(IODIRA_ADDR);

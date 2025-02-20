@@ -10,7 +10,6 @@ void setup() {
   Serial.begin(115200);
   printf("Test begins\n"); 
   // TODO: initialize I2C and mcp23017 object
-  //mcp23017_obj = Mcp23017(0x40);
   uint8_t directions[8] = {0, 0, 0, 0, 0, 1, 0, 0};
   mcp23017_obj.begin(directions);
 

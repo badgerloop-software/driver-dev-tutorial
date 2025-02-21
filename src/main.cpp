@@ -2,7 +2,7 @@
 #include "mcp23017.h"
 
 // TODO: declare mcp23017 object
-Mcp23017 mcp23017_obj(0x20);
+Mcp23017 mcp23017_obj(0x20);  // 7 bit register, so LSB gets omitted (thus it is 0x20 and not 0x40)
 
 // turn on an LED attached to pin 7 and read in the value from a switch from pin 5
 void setup() {

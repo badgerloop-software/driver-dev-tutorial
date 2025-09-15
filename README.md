@@ -81,7 +81,7 @@ Here are a few functions from the Arduino library that will be useful for implem
 ### Optional Section
  In the begin() function you are expected to verify the I2C communication by comparing the value read from the IODIRA with its expected default. If you happen to code the way I do you will find that your code will fail and terminate everytime you reflash the micrcontroller or restart the program.  
    
- Why does it happen? The IOExpander's reset pin is not controlled by the code so the registers only reset their values when they lose power. This means that rerunning the program will not reset the IOExpander registers unless you drive its reset pin.  
+ Why does it happen? The IOExpander's reset pin is not controlled by the code so the registers only reset their values when they lose power. This means that rerunning the program will not reset the IOExpander registers unless you add some extra steps.  
 
  Uncomment the #define EXTERNAL_RESET_ENABLED and complete all the TODOs to finish this task. Do not change the wiring of the circuit, deducing which digital pin to use is also a part of this task.
 

@@ -1,6 +1,9 @@
 #include <Arduino.h>
 #include "mcp23017.h"
 
+//Ignore the compiler instruction related code (the ones that start with #) if you are not attempting the optional section
+
+
 //Uncomment the statement below this line to work on the optional section
 // #define EXTERNAL_RESET_ENABLED
 

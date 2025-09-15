@@ -1,5 +1,5 @@
 # Device Driver Tutorial
-*Authors: Ben Everson, Wilson Guo, Bowen Quan*
+*Authors: Ben Everson, Wilson Guo, Bowen Quan, Aditya Yellapuntula Venkata*
 
 ## Introduction
 Before writing any code for this tutorial, make sure you checkout a new branch with `git checkout -b ______`, where `_____` is the name of your branch. Including your name or username in the branch name is helpful for keeping track of who wrote which branch. 
@@ -8,6 +8,8 @@ Before writing any code for this tutorial, make sure you checkout a new branch w
 In this tutorial, you will write a driver that runs on the L432KC Nucleo microcontroller which can interface with the MCP23017 GPIO (General Purpose Input Output) expander via the I2C communication protocol. 
 
 A GPIO expander provides additional pins which can be used to read input values or write output values. For example, you can write a 1 to a pin that's connected to an LED to turn it on, or read the value from a pin that's connected to a switch. This device is useful if you are already using all the GPIO pins on your microcontroller and need more GPIO pins. 
+
+**(Read the "Optional Section" for an extra task)**
 
 ### Your tasks
 * Complete the functions in [mcp23017.cpp](/src/mcp23017.cpp)
@@ -76,6 +78,18 @@ Here are a few functions from the Arduino library that will be useful for implem
 ### Note
  The data in an I2C message is always one or more **bytes** long. This means that we can't just tell the device to write or read a single **bit** of a register. We will always be dealing with all 8 bits, AKA a byte, at once.
 
+### Optional Section
+ In the begin() function you are expected to verify the I2C communication by comparing the value read from the IODIRA with its expected default. If you happen to code the way I do you will find that your code will fail and terminate everytime you reflash the micrcontroller or restart the program.  
+   
+ Why does it happen? The IOExpander's reset pin is not controlled by the code so the registers only reset their values when they lose power. This means that rerunning the program will not reset the IOExpander registers unless you drive its reset pin.  
+
+ Uncomment the #define EXTERNAL_RESET_ENABLED and complete all the TODOs to finish this task. Do not change the wiring of the circuit, deducing which digital pin to use is also a part of this task.
+
+ **Note**: I left out some important information to complete this task so that you can look through the datasheet and Nucleo L432KC's pinout.  
+
+ [MCP32017 datasheet](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf)  
+   
+ [L432KC Pinout](https://os.mbed.com/platforms/ST-Nucleo-L432KC/)
 
 ## Hints for specific functions
 ### The constructor `Mcp23017::Mcp23017(int addr)`

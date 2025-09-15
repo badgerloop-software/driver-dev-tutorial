@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "mcp23017.h"
 
+//Uncomment the statement below this line to work on the optional section
 // #define EXTERNAL_RESET_ENABLED
 
 #ifdef EXTERNAL_RESET_ENABLED

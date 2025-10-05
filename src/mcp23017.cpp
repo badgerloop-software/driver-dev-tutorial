@@ -2,13 +2,12 @@
 
 // TODO (optional): Define macros for useful register below:
 #define IODIRA 0x00
-#define GPIOA 0x12
+#define GPIORED 0x12
 int addr;
 
 // TODO: Initialize i2cBus member
 Mcp23017::Mcp23017(int addr) {
     this->addr = addr;
-    Wire.begin();
 }
 
 uint8_t Mcp23017::get_dir(int pin) {
@@ -24,7 +23,7 @@ uint8_t Mcp23017::get_dir(int pin) {
 
 uint8_t Mcp23017::get_state(int pin) {
     Wire.beginTransmission(addr);
-    Wire.write(GPIOA);
+    Wire.write(GPIORED);
     Wire.endTransmission();
     Wire.requestFrom(addr, 1);
     uint8_t byte = Wire.read();
@@ -51,13 +50,13 @@ int Mcp23017::set_dir(int pin, uint8_t dir) {
 // TODO: Write to state register
 int Mcp23017::set_state(int pin, uint8_t val) {
     Wire.beginTransmission(addr);
-    Wire.write(GPIOA);
+    Wire.write(GPIORED);
     Wire.endTransmission();
     Wire.requestFrom(addr, 1);
     uint8_t byte = Wire.read();
     byte = (byte & ~(1 << pin)) | (val << pin);
     Wire.beginTransmission(addr);
-    Wire.write(GPIOA);
+    Wire.write(GPIORED);
     Wire.write(byte);
     Wire.endTransmission();
     return 0;
@@ -80,8 +79,7 @@ int Mcp23017::begin(uint8_t directions[8]) {
     int state;
     for (int i = 0; i < 8; i++) {
         state = set_dir(i, directions[i]);
-        if (state)
-            return 1;
     }
+    return 0;
     // TODO: Add device ID check
 }

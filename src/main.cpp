@@ -18,6 +18,7 @@ void setup() {
   // initialize Serial for printouts
   Serial.begin(115200);
   printf("Test begins\n"); 
+  Wire.begin();
 
  
 
